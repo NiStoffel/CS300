@@ -7,40 +7,29 @@
  */
 public class Fish extends SimObject{
 
-	private PApplet processing;
-	PImage img;
-	//private int x, y;
-
 	/**
-	 * Constructor that creates a new fish w/ random locations
+	 * Default constructor that creates a new fish w/ random locations
 	 * 
-	 * @param processing
 	 */
-	public Fish(PApplet processing)
+	public Fish()
 	{
-		this.processing = processing;
-		img = processing.loadImage( "images" + java.io.File.separator + "FISH.png" );
-		x = Utility.randomInt( processing.width );
-		y = Utility.randomInt( processing.height );
+		super("images" + java.io.File.separator + "FISH.png");
 	}
 
 	/**
 	 * Constructor that creates a new fish w/ set locations
 	 * 
-	 * @param processing
 	 * @param x
 	 * @param y
 	 */
-	public Fish(PApplet processing, int x, int y)
+	public Fish(int x, int y)
 	{
-		this.processing = processing;
-		img = processing.loadImage( "images" + java.io.File.separator + "FISH.png" );
-		this.x = x;
-		this.y = y;
+		super("images" + java.io.File.separator + "FISH.png", x, y);
 	}
 
 	/**
 	 * Updates location of the fish
+	 * @Override
 	 */
 	public void update()
 	{
@@ -63,25 +52,15 @@ public class Fish extends SimObject{
 	 * Method that detects collision b/w food and fish
 	 * 
 	 * @param food
+	 * @Override
 	 */
-	public void tryToEat(Food food)
+	public void tryToInteract(SimObject food)
 	{
-		if( food.distanceTo( x, y ) < 40 )
-			food.getEaten();
-	}
-
-	/**
-	 * Finds the distance b/w the food and the fish
-	 * 
-	 * @param x
-	 * @param y
-	 * @return
-	 */
-	public float distanceTo(int x, int y)
-	{
-		double deltaXSquared = Math.pow( ( x - this.x ), 2 );
-		double deltaYSquared = Math.pow( ( y - this.y ), 2 );
-		return new Float( Math.abs( Math.sqrt( deltaXSquared + deltaYSquared ) ) );
+		if(food instanceof Food)
+		{
+			if( food.distanceTo( x, y ) < 40 )
+				((Food) food).getEaten();
+		}
 	}
 
 	/**

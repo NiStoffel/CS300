@@ -15,6 +15,7 @@ public class SwimSimulation {
 
 	//Creates the objects that will be instantiated here
 	private PApplet processing;
+	private ArrayList<SimObject> simObjects;
 	private Fish[] fishes; 
 	private Food[] foods; 
 	private Hook hook; 
@@ -28,6 +29,8 @@ public class SwimSimulation {
 	{
 
 		this.processing = processing;
+		SimObject.setProcessing(processing);
+		simObjects = new ArrayList<SimObject>();
 		File ssf = new File("FileOptions.ssf"); 
 		/* Looks for FileOptions.ssf and splits the ssd file locations into strings.
 		 * if the file is found
@@ -51,22 +54,33 @@ public class SwimSimulation {
 	 */
 	public void update() 
 	{
+		if(Utility.randomInt(19) == 1)
+		{
+			simObjects.add(new Food(Utility.randomInt(processing.width), 0));
+		}
 
 		processing.clear();
 		processing.background(0, 255, 255);
 
-		//Calls update on each fish, food, and hook object
-		for (int i = 0; i < fishes.length; i++) {
-			fishes[i].update();
-			for (int x = 0; x < foods.length; x++) {
-				fishes[i].tryToEat(foods[x]);
-			}
-			hook.tryToCatch(fishes[i]);
-		}
-		for (int i = 0; i < foods.length; i++) {
-			foods[i].update();
-		}
+		//Calls update on each  and hook object
 		hook.update();
+		for(int j = 0; j < simObjects.size(); j++) 
+		{
+			simObjects.get(j).update();
+			for(int x = 0; x < simObjects.size(); x++) {
+				simObjects.get(j).tryToInteract(simObjects.get(x));
+			}
+			hook.tryToInteract(simObjects.get(j));
+		}
+		
+		for(int j = 0; j < simObjects.size(); j++)
+		{
+			if(simObjects.get(j).shouldBeRemoved())
+			{
+				simObjects.remove(j);
+				j--;
+			}
+		}
 
 	}
 
@@ -144,17 +158,15 @@ public class SwimSimulation {
 	 */
 	private void loadDefault(PApplet processing)
 	{
-		fishes = new Fish[4];
-		foods = new Food[6];
-		hook = new Hook(this.processing);
+		hook = new Hook();
 
-		for(int i = 0; i < fishes.length; i++)
+		for(int i = 0; i < 4; i++)
 		{
-			fishes[i] = new Fish(processing);
+			simObjects.add(new Fish());
 		}
-		for(int i = 0; i < foods.length; i++)
+		for(int i = 0; i < 6; i++)
 		{
-			foods[i] = new Food(processing);
+			simObjects.add(new Food());
 		}	
 
 	}
@@ -222,7 +234,7 @@ public class SwimSimulation {
 						objectPosition = lines.get( x + y ).split(",");
 
 						// Adds Fish object to fishes array using trimed x and y
-						fishes[y - 1] = new Fish(processing, Integer.parseInt(
+						fishes[y - 1] = new Fish(Integer.parseInt(
 								objectPosition[0].trim()),
 								Integer.parseInt(objectPosition[1].trim()));
 					}
@@ -263,7 +275,7 @@ public class SwimSimulation {
 						objectPosition = lines.get( x + y ).split(",");
 
 						// Adds Food object to foods array using trimed x and y
-						foods[y - 1] = new Food(processing, Integer.parseInt(
+						foods[y - 1] = new Food(Integer.parseInt(
 								objectPosition[0].trim()),
 								Integer.parseInt(objectPosition[1].trim()));
 					}
@@ -290,7 +302,7 @@ public class SwimSimulation {
 					objectPosition = lines.get( x + 1 ).split(",");
 
 					// Adds Fish object to fishes array using trimed x and y
-					hook = new Hook(processing, Integer.parseInt(objectPosition[0].trim()),
+					hook = new Hook(Integer.parseInt(objectPosition[0].trim()),
 							Integer.parseInt(objectPosition[1].trim()));
 
 					// Sets x to skip the lines used to set up the hook object
@@ -309,6 +321,15 @@ public class SwimSimulation {
 				{
 					throw new DataFormatException();
 				}
+			}
+			
+			for(int j = 0; j < fishes.length; j++)
+			{
+				simObjects.add(fishes[j]);
+			}
+			for(int j = 0; j < foods.length; j++)
+			{
+				simObjects.add(foods[j]);
 			}
 
 			// Checks to make sure every object was set up

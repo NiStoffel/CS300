@@ -7,40 +7,29 @@
  */
 public class Food extends SimObject{
 
-	private PApplet processing;
-	PImage img;
-	//private int x, y;
-
 	/**
 	 * Constructor that creates a new food w/ random locations
 	 * 
-	 * @param processing
 	 */
-	public Food(PApplet processing)
+	public Food()
 	{
-		this.processing = processing;
-		img = processing.loadImage( "images" + java.io.File.separator + "FOOD.png" );
-		x = Utility.randomInt( processing.width );
-		y = Utility.randomInt( processing.height );
+		super("images" + java.io.File.separator + "FOOD.png");
 	}
 
 	/**
 	 * Constructor that creates a new food w/ set locations
 	 * 
-	 * @param processing
 	 * @param x
 	 * @param y
 	 */
-	public Food(PApplet processing, int x, int y)
+	public Food(int x, int y)
 	{
-		this.processing = processing;
-		img = processing.loadImage( "images" + java.io.File.separator + "FOOD.png" );
-		this.x = x;
-		this.y = y;
+		super("images" + java.io.File.separator + "FOOD.png", x, y);
 	}
 
 	/**
 	 * Changes the location of the food
+	 * @Override
 	 */
 	public void update()
 	{
@@ -72,26 +61,11 @@ public class Food extends SimObject{
 	}
 
 	/**
-	 * Returns the distance of the food to an object
-	 * 
-	 * @param x
-	 * @param y
-	 * @return
-	 */
-	public float distanceTo(int x, int y) 
-	{
-		double deltaXSquared = Math.pow( ( x - this.x ), 2 );
-		double deltaYSquared = Math.pow( ( y - this.y ), 2 );
-		return new Float( Math.abs( Math.sqrt( deltaXSquared + deltaYSquared ) ) );
-	}
-
-	/**
 	 * If the food collides with a fish, set the food x coordinate to a random position
 	 * and move the food to the top of the screen
 	 */
 	public void getEaten() 
 	{
-		x = Utility.randomInt( processing.width );
-		y = processing.height-1;
+		removeObject = true;
 	}
 }

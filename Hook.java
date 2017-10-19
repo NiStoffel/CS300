@@ -6,41 +6,30 @@
  *@since 2017-10-04
  */
 public class Hook extends SimObject{
-
-	private PApplet processing;
-	PImage img;
-	//private int x, y;
-
+	
 	/**
 	 * Constructor that creates new Hook w/ random locations
 	 * 
-	 * @param processing
 	 */
-	public Hook(PApplet processing)
+	public Hook()
 	{
-		this.processing = processing;
-		img = processing.loadImage( "images" + java.io.File.separator + "HOOK.png" );
-		x = Utility.randomInt( processing.width );
-		y = Utility.randomInt( processing.height );
+		super("images" + java.io.File.separator + "HOOK.png");
 	}
 
 	/**
 	 * Constructor that creates new Hook w/ set locations
 	 * 
-	 * @param processing
 	 * @param x
 	 * @param y
 	 */
-	public Hook(PApplet processing, int x, int y)
+	public Hook(int x, int y)
 	{
-		this.processing = processing;
-		img = processing.loadImage( "images" + java.io.File.separator + "HOOK.png" );
-		this.x = x;
-		this.y = y;
+		super("images" + java.io.File.separator + "HOOK.png", x, y);
 	}
 
 	/**
 	 * Updates the location of the hook coordinates
+	 * @Override
 	 */
 	public void update()
 	{
@@ -78,10 +67,14 @@ public class Hook extends SimObject{
 	 * Handles collisions b/w hook and fish
 	 * 
 	 * @param fish
+	 * @Override
 	 */
-	public void tryToCatch(Fish fish)
+	public void tryToInteract(SimObject fish)
 	{
-		if( fish.distanceTo( x, y ) < 40 )
-			fish.getCaught();
+		if(fish instanceof Fish)
+		{
+			if( fish.distanceTo( x, y ) < 40 )
+				((Fish) fish).getCaught();
+		}
 	}
 }
